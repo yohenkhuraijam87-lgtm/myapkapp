@@ -1,10 +1,222 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My APK App</title>
+  <meta charset="UTF-8" />
+  <title>Kindle Pro Publisher</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      transition: 0.3s;
+    }
+
+    /* ===== THEMES ===== */
+    .dark { background:#0b0f19; color:white; }
+    .light { background:white; color:black; }
+    .sepia { background:#f4ecd8; color:#5b4636; }
+
+    /* ===== LAYOUT ===== */
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: #111827;
+      color: white;
+      padding: 10px;
+    }
+
+    .btn {
+      padding: 6px 10px;
+      margin: 3px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .reader {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toolbar {
+      background: #1e293b;
+      padding: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    #viewer {
+      flex: 1;
+      padding: 20px;
+      overflow: auto;
+    }
+
+    /* ===== A4 MODE ===== */
+    .a4-mode #viewer {
+      width: 210mm;
+      min-height: 297mm;
+      margin: auto;
+      background: white;
+      color: black;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      padding: 20mm;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ===== KINDLE MODE ===== */
+    .kindle-mode #viewer {
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    /* ===== FONT OPTIONS ===== */
+    .font-small { font-size: 14px; }
+    .font-medium { font-size: 18px; }
+    .font-large { font-size: 22px; }
+
+    .serif { font-family: Georgia; }
+    .sans { font-family: Arial; }
+  </style>
 </head>
-<body>
-  <h1>Hello Android App 🚀</h1>
-  <p>Capacitor app is working!</p>
+
+<body class="dark kindle-mode font-medium sans">
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h3>📚 Kindle Pro</h3>
+
+    <button class="btn" onclick="loadDemo()">Demo Book</button>
+    <button class="btn" onclick="toggleMode()">📖 Toggle Kindle/A4</button>
+    <button class="btn" onclick="bookmark()">🔖 Bookmark</button>
+    <button class="btn" onclick="showBookmarks()">📌 Show Bookmarks</button>
+
+    <div id="marks"></div>
+  </div>
+
+  <!-- READER -->
+  <div class="reader">
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <button class="btn" onclick="setTheme('dark')">Dark</button>
+      <button class="btn" onclick="setTheme('light')">Light</button>
+      <button class="btn" onclick="setTheme('sepia')">Sepia</button>
+
+      <button class="btn" onclick="setFont('font-small')">A-</button>
+      <button class="btn" onclick="setFont('font-medium')">A</button>
+      <button class="btn" onclick="setFont('font-large')">A+</button>
+
+      <button class="btn" onclick="setFontStyle('serif')">Serif</button>
+      <button class="btn" onclick="setFontStyle('sans')">Sans</button>
+
+      <button class="btn" onclick="progress()">📊 Progress</button>
+    </div>
+
+    <div id="viewer"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+let book;
+let rendition;
+let bookmarks = JSON.parse(localStorage.getItem("marks")) || [];
+let isA4 = false;
+
+/* ===== LOAD EPUB ===== */
+function loadBook(url){
+  book = ePub(url);
+
+  rendition = book.renderTo("viewer", {
+    width: "100%",
+    height: "100%"
+  });
+
+  rendition.display();
+
+  // track progress
+  rendition.on("relocated", (location) => {
+    localStorage.setItem("progress", location.start.cfi);
+  });
+}
+
+/* ===== DEMO ===== */
+function loadDemo(){
+  loadBook("https://standardebooks.org/ebooks/jane-austen/pride-and-prejudice/downloads/jane-austen_pride-and-prejudice.epub");
+}
+
+/* ===== MODE SWITCH ===== */
+function toggleMode(){
+  isA4 = !isA4;
+  document.body.classList.toggle("a4-mode", isA4);
+  document.body.classList.toggle("kindle-mode", !isA4);
+}
+
+/* ===== THEMES ===== */
+function setTheme(t){
+  document.body.className = t + " " + (isA4 ? "a4-mode" : "kindle-mode");
+}
+
+/* ===== FONT ===== */
+function setFont(f){
+  document.body.classList.remove("font-small","font-medium","font-large");
+  document.body.classList.add(f);
+}
+
+function setFontStyle(s){
+  document.body.classList.remove("serif","sans");
+  document.body.classList.add(s);
+}
+
+/* ===== BOOKMARKS ===== */
+function bookmark(){
+  const cfi = localStorage.getItem("progress");
+  if(!cfi) return;
+
+  bookmarks.push(cfi);
+  localStorage.setItem("marks", JSON.stringify(bookmarks));
+  alert("Bookmark saved ✔");
+}
+
+function showBookmarks(){
+  const box = document.getElementById("marks");
+  box.innerHTML = "";
+
+  bookmarks.forEach((b,i)=>{
+    const div = document.createElement("div");
+    div.innerText = "🔖 " + (i+1);
+    div.onclick = () => rendition.display(b);
+    box.appendChild(div);
+  });
+}
+
+/* ===== PROGRESS ===== */
+function progress(){
+  alert("Saved position: " + (localStorage.getItem("progress") || "none"));
+}
+
+/* START */
+loadDemo();
+
+</script>
+
 </body>
 </html>
+
+
