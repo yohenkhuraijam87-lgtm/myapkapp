@@ -7,6 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.myapp.app"
+
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
 
@@ -27,15 +28,10 @@ android {
         }
     }
 
-    // ✅ FIX: Java 17 compatibility (SOLVES YOUR ERROR)
+    // ✅ FIX: Java 17 compatibility (IMPORTANT)
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
-    }
-
-    // ✅ FIX: Kotlin compatibility (safe for Capacitor)
-    kotlinOptions {
-        jvmTarget = "17"
     }
 }
 
@@ -43,7 +39,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.core:core:1.12.0"
     implementation "com.google.android.material:material:1.11.0"
 
     // Capacitor core (required)
