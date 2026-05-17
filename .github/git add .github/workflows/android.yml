@@ -1,51 +1,52 @@
-name: Auto Build Android APK
+name: Build Android APK
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      # 1. Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      # 2. Setup Node.js (IMPORTANT FIX: Node 22)
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
+      # 3. Install dependencies
       - name: Install dependencies
         run: npm install
 
-      - name: Build Web App (IMPORTANT)
-        run: npm run build || true
+      # 4. Install Capacitor CLI
+      - name: Install Capacitor
+        run: npm install @capacitor/cli @capacitor/core
 
+      # 5. Sync Capacitor
       - name: Sync Capacitor
         run: npx cap sync android
 
+      # 6. Setup Java (required for Android build)
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
 
-      - name: Clean Android Build
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew clean
-
+      # 7. Build Android APK
       - name: Build APK
         run: |
           cd android
           ./gradlew assembleDebug
 
-      - name: Upload APK artifact
+      # 8. Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: kindle-pro-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
