@@ -1,45 +1,11 @@
-apply plugin: 'com.android.application'
-
-android {
-    namespace "com.myapp.app"
-
-    compileSdkVersion 34
-
-    defaultConfig {
-        applicationId "com.myapp.app"
-
-        minSdkVersion 22
-        targetSdkVersion 34
-
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        aaptOptions {
-            ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
-        }
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    // ✅ Java 17 fix
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    // ✅ STABLE VERSIONS (compatible with AGP 8.2.2)
     implementation "androidx.appcompat:appcompat:1.6.1"
     implementation "androidx.core:core:1.12.0"
+    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.activity:activity:1.7.2"
     implementation "com.google.android.material:material:1.11.0"
 
     implementation project(':capacitor-android')
