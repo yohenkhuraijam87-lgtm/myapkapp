@@ -9,42 +9,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js (FIXED: Node 22 REQUIRED)
-      - name: Setup Node
+      # FORCE NODE 22 FIRST (VERY IMPORTANT)
+      - name: Setup Node 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # 3. Install dependencies
+      - name: Verify Node Version
+        run: node -v
+
       - name: Install dependencies
         run: npm install
 
-      # 4. Install Capacitor CLI
       - name: Install Capacitor CLI
-        run: npm install @capacitor/cli @capacitor/core
+        run: npm install -g @capacitor/cli
 
-      # 5. Sync Capacitor (Android)
-      - name: Sync Capacitor
+      - name: Install Capacitor Core
+        run: npm install @capacitor/core
+
+      - name: Sync Capacitor Android
         run: npx cap sync android
 
-      # 6. Setup Java (Android build requirement)
-      - name: Setup Java
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      # 7. Build Android APK
-      - name: Build APK
+      - name: Build Android APK
         run: |
           cd android
           ./gradlew assembleDebug
 
-      # 8. Upload APK artifact
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
