@@ -9,52 +9,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repo
+      # 1. Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ✅ FIX: Node 22 REQUIRED
+      # 2. Setup Node 22 (REQUIRED for Capacitor)
       - name: Setup Node 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # Verify Node version (IMPORTANT DEBUG STEP)
+      # 3. Verify Node version
       - name: Check Node Version
         run: node -v
 
-      # Install dependencies
+      # 4. Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Install Capacitor
+      # 5. Install Capacitor CLI globally
       - name: Install Capacitor CLI
         run: npm install -g @capacitor/cli
 
+      # 6. Install Capacitor core
       - name: Install Capacitor Core
         run: npm install @capacitor/core
 
-      # Sync Android
+      # 7. Sync Capacitor Android
       - name: Sync Capacitor Android
         run: npx cap sync android
 
-      # Setup Java
-      - name: Setup Java 17
+      # 8. Setup Java 21 (FIX FOR GRADLE ERROR)
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
-      # Build APK
-      - name: Build APK
+      # 9. Build APK
+      - name: Build Android APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      # Upload APK
+      # 10. Upload APK artifact
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: kindle-pro-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
