@@ -16,6 +16,10 @@ jobs:
 
       - run: npm install
 
+      - run: npm install -g @capacitor/cli
+
+      - run: npm run build || true
+
       - run: npx cap sync android
 
       - uses: actions/setup-java@v4
