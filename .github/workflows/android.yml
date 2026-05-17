@@ -8,30 +8,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repo
       - uses: actions/checkout@v4
 
+      # 2. Setup Node (IMPORTANT: Capacitor needs Node 22+)
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
+      # 3. Install dependencies
       - run: npm install
 
+      # 4. Install Capacitor CLI globally
       - run: npm install -g @capacitor/cli
 
+      # 5. Build web app (if exists)
       - run: npm run build || true
 
+      # 6. Sync Capacitor Android project
       - run: npx cap sync android
 
+      # 7. Setup Java for Android build
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
+      # 8. Build APK
       - run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
+      # 9. Upload APK artifact
       - uses: actions/upload-artifact@v4
         with:
           name: app-debug
