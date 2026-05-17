@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js (IMPORTANT FIX: Node 22)
+      # 2. Setup Node.js (FIXED: Node 22 REQUIRED)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -24,14 +24,14 @@ jobs:
         run: npm install
 
       # 4. Install Capacitor CLI
-      - name: Install Capacitor
+      - name: Install Capacitor CLI
         run: npm install @capacitor/cli @capacitor/core
 
-      # 5. Sync Capacitor
+      # 5. Sync Capacitor (Android)
       - name: Sync Capacitor
         run: npx cap sync android
 
-      # 6. Setup Java (required for Android build)
+      # 6. Setup Java (Android build requirement)
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
