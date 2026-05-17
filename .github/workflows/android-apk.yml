@@ -9,51 +9,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Setup Node 22 (REQUIRED for Capacitor)
-      - name: Setup Node 22
+      # Node 22 (REQUIRED for Capacitor)
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # 3. Verify Node version
-      - name: Check Node Version
-        run: node -v
-
-      # 4. Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # 5. Install Capacitor CLI globally
       - name: Install Capacitor CLI
-        run: npm install -g @capacitor/cli
+        run: npm install @capacitor/cli @capacitor/core
 
-      # 6. Install Capacitor core
-      - name: Install Capacitor Core
-        run: npm install @capacitor/core
-
-      # 7. Sync Capacitor Android
-      - name: Sync Capacitor Android
-        run: npx cap sync android
-
-      # 8. Setup Java 21 (FIX FOR GRADLE ERROR)
-      - name: Setup Java 21
+      # Install Java 17 (stable for Android)
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
 
-      # 9. Build APK
-      - name: Build Android APK
+      # Install Android SDK automatically
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      # Build web assets (your app is static)
+      - name: Build web
+        run: echo "Static app - skipping build"
+
+      # Capacitor sync (IMPORTANT)
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      # Build APK
+      - name: Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      # 10. Upload APK artifact
+      # Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
