@@ -19,10 +19,7 @@ body {
 .sepia { background:#f4ecd8; color:#5b4636; }
 
 /* LAYOUT */
-.app {
-  display: flex;
-  height: 100vh;
-}
+.app { display: flex; height: 100vh; }
 
 .sidebar {
   width: 240px;
@@ -60,27 +57,6 @@ body {
   overflow: auto;
 }
 
-/* A4 MODE */
-.a4-mode #viewer {
-  width: 210mm;
-  min-height: 297mm;
-  margin: auto;
-  background: white;
-  color: black;
-  padding: 20mm;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
-
-/* KINDLE MODE */
-.kindle-mode #viewer {
-  max-width: 700px;
-  margin: auto;
-  padding: 20px;
-  font-size: 18px;
-  line-height: 1.8;
-}
-
-/* FONT */
 .font-small { font-size: 14px; }
 .font-medium { font-size: 18px; }
 .font-large { font-size: 22px; }
@@ -94,11 +70,9 @@ body {
 
 <div class="app">
 
-  <!-- SIDEBAR -->
   <div class="sidebar">
     <h3>📚 Kindle Pro</h3>
 
-    <button class="btn" onclick="loadDemo()">Open Book</button>
     <button class="btn" onclick="toggleMode()">📖 Toggle Mode</button>
     <button class="btn" onclick="bookmark()">🔖 Bookmark</button>
     <button class="btn" onclick="showBookmarks()">📌 Bookmarks</button>
@@ -106,7 +80,6 @@ body {
     <div id="marks"></div>
   </div>
 
-  <!-- READER -->
   <div class="reader">
 
     <div class="toolbar">
@@ -127,10 +100,10 @@ body {
     <div id="viewer"></div>
 
   </div>
+
 </div>
 
 <script>
-
 let book;
 let rendition;
 let bookmarks = JSON.parse(localStorage.getItem("marks")) || [];
@@ -138,7 +111,6 @@ let isA4 = false;
 
 /* LOAD EPUB */
 function loadBook(url){
-
   book = ePub(url);
 
   rendition = book.renderTo("viewer", {
@@ -153,10 +125,10 @@ function loadBook(url){
   });
 }
 
-/* LOAD LOCAL BOOK */
-function loadDemo(){
+/* START */
+window.addEventListener("DOMContentLoaded", () => {
   loadBook("books/book1.epub");
-}
+});
 
 /* MODE */
 function toggleMode(){
@@ -207,14 +179,8 @@ function showBookmarks(){
 
 /* PROGRESS */
 function progress(){
-  alert("Saved position: " + (localStorage.getItem("progress") || "none"));
+  alert(localStorage.getItem("progress") || "none");
 }
-
-/* SAFE START */
-window.addEventListener("DOMContentLoaded", () => {
-  loadDemo();
-});
-
 </script>
 
 </body>
