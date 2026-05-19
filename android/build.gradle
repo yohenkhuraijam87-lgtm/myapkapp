@@ -16,8 +16,7 @@ allprojects {
 }
 
 /*
- * ✅ IMPORTANT FIX:
- * Force ALL modules (including capacitor-android) to use Java 17
+ * FORCE JAVA 17 ONLY (SAFE FOR CAPACITOR)
  */
 subprojects {
     tasks.withType(JavaCompile).configureEach {
@@ -27,7 +26,7 @@ subprojects {
 }
 
 /*
- * Clean task
+ * CLEAN TASK
  */
 task clean(type: Delete) {
     delete rootProject.buildDir
